@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saveDocumentHandler = exports.getUserDocumentsHandler = void 0;
+exports.deleteDocumentHandler = exports.setStateDocument = exports.saveDocumentHandler = exports.getUserDocumentsHandler = void 0;
 const firebaseService_1 = require("./firebaseService");
 const getUserDocumentsHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params; // ID del usuario
@@ -17,7 +17,9 @@ const getUserDocumentsHandler = (req, res) => __awaiter(void 0, void 0, void 0, 
         const snapshot = yield firebaseService_1.db.ref(`documents/${uid}`).once("value");
         const documents = snapshot.val();
         if (!documents) {
-            return res.status(404).json({ message: "No se encontraron documentos para el usuario" });
+            return res
+                .status(404)
+                .json({ message: "No se encontraron documentos para el usuario" });
         }
         res.json(documents);
     }
@@ -29,21 +31,16 @@ const getUserDocumentsHandler = (req, res) => __awaiter(void 0, void 0, void 0, 
 exports.getUserDocumentsHandler = getUserDocumentsHandler;
 const saveDocumentHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params; // ID del usuario
-    console.log("🚀 ~ file: documentController.ts:25 ~ saveDocumentHandler ~ id:", uid);
     const { image, title, state } = req.body; // Propiedades del documento
     try {
-        // Generar un ID único para el documento
         const documentId = firebaseService_1.db.ref().child(`documents/${uid}`).push().key;
-        // Validar el estado del documento
         const validStates = ["Sin revisar", "En revisión", "Rechazado", "Aceptado"];
         if (!validStates.includes(state)) {
             return res.status(400).json({ message: "Estado inválido" });
         }
-        // Crear el objeto con las propiedades del documento
         const document = { image, title, state };
-        // Guardar el documento en la base de datos
         yield firebaseService_1.db.ref(`documents/${uid}/${documentId}`).set(document);
-        res.json({ message: "Documento guardado exitosamente" });
+        res.json({ document, documentId });
     }
     catch (error) {
         console.error(error);
@@ -51,4 +48,39 @@ const saveDocumentHandler = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.saveDocumentHandler = saveDocumentHandler;
+const setStateDocument = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { uid, idDocument } = req.params;
+        const documentRef = firebaseService_1.db.ref(`documents/${uid}/${idDocument}`);
+        yield documentRef.update({ state: "En revisión" });
+        res.json({ message: "Estado del documento actualizado exitosamente" });
+    }
+    catch (error) {
+        console.error("Error al actualizar el estado del documento:", error);
+        res
+            .status(500)
+            .json({ error: "Error al actualizar el estado del documento" });
+    }
+});
+exports.setStateDocument = setStateDocument;
+const deleteDocumentHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid, idDocument } = req.params;
+    try {
+        // Verificar si el documento existe en la base de datos
+        const documentRef = firebaseService_1.db.ref(`documents/${uid}/${idDocument}`);
+        const documentSnapshot = yield documentRef.once("value");
+        const documentData = documentSnapshot.val();
+        if (!documentData) {
+            return res.status(404).json({ message: "Documento no encontrado" });
+        }
+        // Eliminar el documento de la base de datos
+        yield documentRef.remove();
+        res.json({ message: "Documento eliminado exitosamente" });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+});
+exports.deleteDocumentHandler = deleteDocumentHandler;
 //# sourceMappingURL=documentController.js.map

@@ -1,7 +1,7 @@
-import * as admin from 'firebase-admin';
+import * as admin from "firebase-admin";
 
 // Configuración de Firebase
-const serviceAccount = require('../serviciosdocumentos-e5986-firebase-adminsdk-ko94d-03ad76e4c0.json');
+const serviceAccount = require("../serviciosdocumentos-e5986-firebase-adminsdk-ko94d-03ad76e4c0.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -9,3 +9,4 @@ admin.initializeApp({
 });
 
 export const db = admin.database();
+export const storage = admin.storage();

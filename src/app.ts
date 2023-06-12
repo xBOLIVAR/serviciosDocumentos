@@ -3,8 +3,10 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { getReviewers, loginHandler, registerHandler, setReviewDocuments } from "./usersService";
 import {
+  deleteDocumentHandler,
   getUserDocumentsHandler,
   saveDocumentHandler,
+  setStateDocument,
 } from "./documentController";
 
 const app = express();
@@ -20,6 +22,8 @@ app.post("/documents/:uid", saveDocumentHandler);
 app.post("/login", loginHandler);
 app.post("/register", registerHandler);
 app.post("/users/:uid/reviewDocuments", setReviewDocuments)
+app.patch('/documents/:uid/:idDocument', setStateDocument)
+app.delete("/documents/:uid/:idDocument", deleteDocumentHandler)
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);

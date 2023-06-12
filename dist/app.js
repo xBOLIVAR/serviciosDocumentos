@@ -19,6 +19,8 @@ app.post("/documents/:uid", documentController_1.saveDocumentHandler);
 app.post("/login", usersService_1.loginHandler);
 app.post("/register", usersService_1.registerHandler);
 app.post("/users/:uid/reviewDocuments", usersService_1.setReviewDocuments);
+app.patch('/documents/:uid/:idDocument', documentController_1.setStateDocument);
+app.delete("/documents/:uid/:idDocument", documentController_1.deleteDocumentHandler);
 app.listen(port, () => {
     console.log(`Servidor en ejecución en http://localhost:${port}`);
 });

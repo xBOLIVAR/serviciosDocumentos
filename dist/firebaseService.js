@@ -23,13 +23,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.db = void 0;
+exports.storage = exports.db = void 0;
 const admin = __importStar(require("firebase-admin"));
 // Configuración de Firebase
-const serviceAccount = require('../serviciosdocumentos-e5986-firebase-adminsdk-ko94d-03ad76e4c0.json');
+const serviceAccount = require("../serviciosdocumentos-e5986-firebase-adminsdk-ko94d-03ad76e4c0.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://serviciosdocumentos-e5986-default-rtdb.firebaseio.com",
 });
 exports.db = admin.database();
+exports.storage = admin.storage();
 //# sourceMappingURL=firebaseService.js.map
