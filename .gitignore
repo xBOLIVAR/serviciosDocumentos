@@ -1,0 +1,7 @@
+node_modules/
+functions/
+.vscode
+npm-debug.log
+.idea
+PHP/
+.scannerwork
