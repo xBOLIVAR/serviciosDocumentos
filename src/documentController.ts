@@ -48,7 +48,6 @@ export const getMyReviews = async (req: Request, res: Response) => {
       }
     }
 
-    console.log("🚀 ~ file: documentController.ts:60 ~ getMyReviews ~ documents:", documents);
     res.json(documents);
   } catch (error) {
     console.error(error);

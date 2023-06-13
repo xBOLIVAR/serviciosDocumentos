@@ -30,7 +30,6 @@ export const authMiddleware = (
     // Llamar a la siguiente función de middleware
     next();
   } catch (error) {
-    console.log("🚀 ~ file: authMiddleware.ts:33 ~ error:", error);
     return res.status(401).json({ message: "Token de autenticación inválido" });
   }
 };
