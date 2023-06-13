@@ -92,13 +92,13 @@ export const getReviewers = async (req: Request, res: Response) => {
 export const setReviewDocuments = async (req: Request, res: Response) => {
   try {
     const { uid } = req.params;
-    const { idDocument, title } = req.body;
+    const { idDocument, title, owner } = req.body;
 
     // Obtener una referencia al usuario específico
     const userRef = db.ref(`users/${uid}`);
 
     // Obtener una referencia al documento específico dentro de "reviewDocuments"
-    const documentRef = userRef.child(`reviewDocuments/${idDocument}`);
+    const documentRef = userRef.child(`reviewDocuments/${owner}/${idDocument}`);
 
     // Guardar el título del documento en la propiedad "title"
     await documentRef.set({ title });

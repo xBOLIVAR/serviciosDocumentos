@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDocumentHandler = exports.setStateDocument = exports.saveDocumentHandler = exports.getUserDocumentsHandler = void 0;
+exports.deleteDocumentHandler = exports.setStateDocument = exports.saveDocumentHandler = exports.getMyReviews = exports.getUserDocumentsHandler = void 0;
 const firebaseService_1 = require("./firebaseService");
 const getUserDocumentsHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params; // ID del usuario
@@ -29,6 +29,37 @@ const getUserDocumentsHandler = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.getUserDocumentsHandler = getUserDocumentsHandler;
+const getMyReviews = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid } = req.params; // ID del usuario
+    try {
+        const snapshot = yield firebaseService_1.db.ref(`users/${uid}/reviewDocuments`).once("value");
+        const owners = snapshot.val();
+        if (!owners) {
+            return res
+                .status(404)
+                .json({ message: "No se encontraron documentos para el usuario" });
+        }
+        const documents = [];
+        for (const owner in owners) {
+            for (const idDocument in owners[owner]) {
+                const documentSnapshot = yield firebaseService_1.db
+                    .ref(`documents/${owner}/${idDocument}`)
+                    .once("value");
+                const document = documentSnapshot.val();
+                if (document) {
+                    documents.push(Object.assign({}, document));
+                }
+            }
+        }
+        console.log("🚀 ~ file: documentController.ts:60 ~ getMyReviews ~ documents:", documents);
+        res.json(documents);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+});
+exports.getMyReviews = getMyReviews;
 const saveDocumentHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = req.params; // ID del usuario
     const { image, title, state } = req.body; // Propiedades del documento

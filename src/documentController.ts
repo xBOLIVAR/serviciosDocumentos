@@ -21,6 +21,41 @@ export const getUserDocumentsHandler = async (req: Request, res: Response) => {
   }
 };
 
+export const getMyReviews = async (req: Request, res: Response) => {
+  const { uid } = req.params; // ID del usuario
+
+  try {
+    const snapshot = await db.ref(`users/${uid}/reviewDocuments`).once("value");
+    const owners = snapshot.val();
+
+    if (!owners) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron documentos para el usuario" });
+    }
+
+    const documents = [];
+
+    for (const owner in owners) {
+      for (const idDocument in owners[owner]) {
+        const documentSnapshot = await db
+          .ref(`documents/${owner}/${idDocument}`)
+          .once("value");
+        const document = documentSnapshot.val();
+        if (document) {
+          documents.push({...document });
+        }
+      }
+    }
+
+    console.log("🚀 ~ file: documentController.ts:60 ~ getMyReviews ~ documents:", documents);
+    res.json(documents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+};
+
 export const saveDocumentHandler = async (req: any, res: Response) => {
   const { uid } = req.params; // ID del usuario
   const { image, title, state } = req.body; // Propiedades del documento
@@ -33,7 +68,7 @@ export const saveDocumentHandler = async (req: any, res: Response) => {
     }
     const document = { image, title, state };
     await db.ref(`documents/${uid}/${documentId}`).set(document);
-    res.json({document, documentId});
+    res.json({ document, documentId });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });

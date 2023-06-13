@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { getReviewers, loginHandler, registerHandler, setReviewDocuments } from "./usersService";
 import {
   deleteDocumentHandler,
+  getMyReviews,
   getUserDocumentsHandler,
   saveDocumentHandler,
   setStateDocument,
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 // Rutas
 app.get("/documents/:uid", getUserDocumentsHandler);
 app.get("/users/reviewers", getReviewers);
+app.get("/users/:uid/reviewers", getMyReviews);
 app.post("/documents/:uid", saveDocumentHandler);
 app.post("/login", loginHandler);
 app.post("/register", registerHandler);

@@ -15,6 +15,7 @@ app.use(body_parser_1.default.json());
 // Rutas
 app.get("/documents/:uid", documentController_1.getUserDocumentsHandler);
 app.get("/users/reviewers", usersService_1.getReviewers);
+app.get("/users/:uid/reviewers", documentController_1.getMyReviews);
 app.post("/documents/:uid", documentController_1.saveDocumentHandler);
 app.post("/login", usersService_1.loginHandler);
 app.post("/register", usersService_1.registerHandler);

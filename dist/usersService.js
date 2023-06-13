@@ -93,11 +93,11 @@ exports.getReviewers = getReviewers;
 const setReviewDocuments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { uid } = req.params;
-        const { idDocument, title } = req.body;
+        const { idDocument, title, owner } = req.body;
         // Obtener una referencia al usuario específico
         const userRef = firebaseService_1.db.ref(`users/${uid}`);
         // Obtener una referencia al documento específico dentro de "reviewDocuments"
-        const documentRef = userRef.child(`reviewDocuments/${idDocument}`);
+        const documentRef = userRef.child(`reviewDocuments/${owner}/${idDocument}`);
         // Guardar el título del documento en la propiedad "title"
         yield documentRef.set({ title });
         res.json({ message: "Documento agregado exitosamente al usuario" });
